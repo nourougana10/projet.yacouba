@@ -3,320 +3,304 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Capture Chantier — Watermark texte + date</title>
+<title>Gana Ousmane — Capture Chantier Pro</title>
 <style>
-:root{--bg:#0f1720;--accent:#0b6b4a;--muted:#9aa6a0;--white:#fff}
-*{box-sizing:border-box}
-body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(180deg,#071018,#0f1720);color:var(--white);display:flex;justify-content:center;padding:18px}
-.app{width:100%;max-width:1100px;display:grid;grid-template-columns:1fr 420px;gap:18px}
-@media(max-width:980px){.app{grid-template-columns:1fr}}
-.panel{background:rgba(255,255,255,0.03);padding:12px;border-radius:12px}
-.viewport{position:relative;border-radius:10px;overflow:hidden;background:#000;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center}
-video#preview{width:100%;height:100%;object-fit:cover}
-.logoOverlay{position:absolute;right:12px;bottom:12px;opacity:0.9;z-index:20;pointer-events:none;width:18%;max-width:160px;min-width:64px;filter:drop-shadow(0 4px 10px rgba(0,0,0,0.6))}
-canvas{display:none}
-.controls{display:flex;gap:12px;justify-content:center;margin-top:12px}
-.btn{padding:12px 16px;border-radius:10px;border:0;background:var(--accent);color:#fff;cursor:pointer;font-weight:700}
-.btn.secondary{background:transparent;border:1px solid rgba(255,255,255,0.06)}
-.bigShutter{width:86px;height:86px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#fff;color:var(--accent);font-size:22px;font-weight:800;box-shadow:0 8px 30px rgba(11,107,74,0.18)}
-table{width:100%;border-collapse:collapse;margin-top:8px}
-th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,0.04);text-align:left;font-size:13px}
-.thumb{width:120px;height:70px;object-fit:cover;border-radius:6px;border:1px solid rgba(255,255,255,0.04)}
-.status{font-size:13px;color:var(--muted);margin-top:8px}
+:root {
+  --bg: #0a0f14;
+  --panel: rgba(255, 255, 255, 0.05);
+  --accent: #10b981; /* Vert plus vif */
+  --danger: #ef4444;
+  --muted: #94a3b8;
+  --white: #ffffff;
+}
+
+* { box-sizing: border-box; transition: all 0.2s ease; }
+
+body { 
+  margin: 0; 
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+  background: var(--bg); 
+  color: var(--white); 
+  display: flex; 
+  justify-content: center; 
+  padding: 20px;
+}
+
+.app { width: 100%; max-width: 1200px; display: grid; grid-template-columns: 1fr 400px; gap: 20px; }
+
+@media(max-width: 1024px) { .app { grid-template-columns: 1fr; } }
+
+.panel { 
+  background: var(--panel); 
+  backdrop-filter: blur(10px); 
+  padding: 20px; 
+  border-radius: 16px; 
+  border: 1px solid rgba(255,255,255,0.1); 
+}
+
+.viewport { 
+  position: relative; 
+  border-radius: 12px; 
+  overflow: hidden; 
+  background: #000; 
+  aspect-ratio: 16/9; 
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+video#preview { width: 100%; height: 100%; object-fit: cover; }
+
+.recording-indicator {
+  position: absolute; top: 15px; left: 15px;
+  display: none; align-items: center; gap: 8px;
+  background: rgba(0,0,0,0.6); padding: 5px 12px; border-radius: 20px;
+  color: #fff; font-size: 12px; font-weight: bold;
+}
+.dot { width: 10px; height: 10px; background: var(--danger); border-radius: 50%; animation: blink 1s infinite; }
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+.logoOverlay { 
+  position: absolute; right: 15px; bottom: 15px; 
+  width: 20%; max-width: 140px; min-width: 80px;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
+}
+
+.controls { display: flex; gap: 15px; justify-content: center; align-items: center; margin-top: 20px; }
+
+.btn { 
+  padding: 12px 20px; border-radius: 10px; border: 0; 
+  background: var(--accent); color: #fff; cursor: pointer; 
+  font-weight: 600; display: flex; align-items: center; gap: 8px;
+}
+.btn:hover { opacity: 0.9; transform: translateY(-2px); }
+.btn.secondary { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); }
+.btn.danger { background: var(--danger); }
+
+.bigShutter { 
+  width: 70px; height: 70px; border-radius: 50%; border: 5px solid rgba(255,255,255,0.2);
+  background: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center;
+}
+.bigShutter:active { transform: scale(0.9); }
+
+table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+th { text-align: left; color: var(--muted); font-size: 12px; text-transform: uppercase; padding: 10px; }
+td { padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 14px; }
+
+.thumb { width: 80px; height: 50px; object-fit: cover; border-radius: 4px; }
+
+.status-bar { 
+  margin-top: 15px; padding: 8px 15px; border-radius: 8px; 
+  background: rgba(0,0,0,0.2); font-size: 13px; color: var(--accent);
+}
+
+a { color: var(--accent); text-decoration: none; font-weight: 500; cursor: pointer; }
+a:hover { text-decoration: underline; }
 </style>
 </head>
 <body>
-<div class="app">
 
-<div class="panel">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-    <div style="display:flex;gap:12px;align-items:center">
-      <img id="logoPreview" src="assets/logo.png" alt="Logo" style="height:48px;border-radius:8px;background:#fff;padding:4px">
-      <div>
-        <div style="font-weight:700">Gana Ousmane</div>
-        <div style="font-size:13px;color:var(--muted)">Capture chantier</div>
+<div class="app">
+  <div class="panel">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px">
+      <div style="display:flex; gap:15px; align-items:center">
+        <img id="logoPreview" src="assets/logo.png" alt="Logo" style="height:50px; border-radius:8px; background:#fff; padding:5px">
+        <div>
+          <div style="font-weight:bold; font-size:18px">Gana Ousmane</div>
+          <div style="font-size:13px; color:var(--muted)">Expertise Chantier</div>
+        </div>
       </div>
     </div>
-    <div style="font-size:13px;color:var(--muted)">Watermark texte et logo appliqués automatiquement</div>
+
+    <div class="viewport">
+      <div class="recording-indicator" id="recIndicator"><div class="dot"></div> ENREGISTREMENT</div>
+      <video id="preview" autoplay playsinline muted></video>
+      <img id="overlayLogo" class="logoOverlay" alt="Logo overlay" src="assets/logo.png" style="display:none">
+    </div>
+
+    <div class="controls">
+      <button class="btn secondary" id="switchCam">🔄 Caméra</button>
+      <button class="bigShutter" id="photoBtn" title="Prendre photo"></button>
+      <button class="btn" id="videoToggle">🔴 Démarrer Vidéo</button>
+    </div>
+
+    <div class="status-bar" id="status">Initialisation du système...</div>
   </div>
 
-  <div class="viewport" id="viewport">
-    <video id="preview" autoplay playsinline muted></video>
-    <img id="overlayLogo" class="logoOverlay" alt="Logo overlay" src="assets/logo.png" style="display:none">
-  </div>
+  <div class="panel">
+    <h3 style="margin-top:0">Médias récents</h3>
+    <div style="max-height: 500px; overflow-y: auto;">
+      <table id="mediaTable">
+        <thead>
+          <tr><th>Aperçu</th><th>Action</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
 
-  <div class="controls">
-    <button class="btn secondary" id="switchCam">Basculer caméra</button>
-    <button class="bigShutter" id="photoBtn" title="Prendre photo">Photo</button>
-    <button class="btn" id="videoToggle" title="Démarrer / Arrêter vidéo">Démarrer vidéo</button>
-  </div>
-
-  <div class="status" id="status">Statut : initialisation...</div>
-</div>
-
-<div class="panel">
-  <div style="display:flex;justify-content:space-between;align-items:center">
-    <div style="font-weight:700">Médias enregistrés</div>
-    <div style="font-size:13px;color:var(--muted)">Liste locale</div>
-  </div>
-
-  <table id="mediaTable">
-    <thead><tr><th>Type</th><th>Aperçu</th><th>Nom</th><th>Date</th><th>Actions</th></tr></thead>
-    <tbody></tbody>
-  </table>
-
-  <div style="margin-top:10px;display:flex;gap:8px">
-    <button class="btn" id="downloadAll">Télécharger tout</button>
-    <button class="btn secondary" id="clearAll">Supprimer tout</button>
-  </div>
-
-  <div style="margin-top:10px;font-size:13px;color:var(--muted)">
-    Les fichiers peuvent être envoyés automatiquement au serveur via l’endpoint /upload.
+    <div style="margin-top:20px; display:flex; gap:10px">
+      <button class="btn" id="downloadAll" style="flex:1">Tout Sauvegarder</button>
+      <button class="btn secondary" id="clearAll">Vider</button>
+    </div>
   </div>
 </div>
 
-</div>
-<canvas id="captureCanvas"></canvas>
+<canvas id="captureCanvas" style="display:none"></canvas>
 
 <script>
 (async function(){
-const preview=document.getElementById('preview');
-const photoBtn=document.getElementById('photoBtn');
-const videoToggle=document.getElementById('videoToggle');
-const switchCam=document.getElementById('switchCam');
-const statusEl=document.getElementById('status');
-const canvas=document.getElementById('captureCanvas');
-const mediaTableBody=document.querySelector('#mediaTable tbody');
-const downloadAllBtn=document.getElementById('downloadAll');
-const clearAllBtn=document.getElementById('clearAll');
-const overlayLogo=document.getElementById('overlayLogo');
+  const preview = document.getElementById('preview');
+  const photoBtn = document.getElementById('photoBtn');
+  const videoToggle = document.getElementById('videoToggle');
+  const switchCam = document.getElementById('switchCam');
+  const statusEl = document.getElementById('status');
+  const canvas = document.getElementById('captureCanvas');
+  const mediaTableBody = document.querySelector('#mediaTable tbody');
+  const recIndicator = document.getElementById('recIndicator');
 
-let stream=null;
-let devices=[];
-let currentIndex=0;
-let recorder=null;
-let recordedChunks=[];
-let rafId=null;
-let logoImg=null;
-const watermarkText='GANA OUSMANE';
+  let stream = null;
+  let useRearCamera = true; 
+  let recorder = null;
+  let recordedChunks = [];
+  let rafId = null;
+  let logoImg = new Image();
+  const watermarkText = 'GANA OUSMANE - CHANTIER';
 
-// --- Charge le logo
-async function loadLogoWithRetry(path, attempts=3){
-  for(let i=0;i<attempts;i++){
-    try{
-      const res=await fetch(path,{cache:'no-store'});
-      if(!res.ok) throw new Error('HTTP '+res.status);
-      const blob=await res.blob();
-      const url=URL.createObjectURL(blob);
-      const img=new Image();
-      await new Promise((resImg,rej)=>{ img.onload=resImg; img.onerror=rej; img.src=url; });
-      overlayLogo.src=url; overlayLogo.style.display='block';
-      return img;
-    }catch(e){ console.warn('Logo load attempt',i+1,e); await new Promise(r=>setTimeout(r,300)); }
-  }
-  overlayLogo.style.display='none';
-  return null;
-}
-logoImg=await loadLogoWithRetry('assets/logo.png');
-statusEl.textContent=logoImg ? 'Logo chargé' : 'Logo introuvable, seul le texte sera appliqué';
+  // Charger le logo
+  logoImg.src = 'assets/logo.png';
+  logoImg.onload = () => { document.getElementById('overlayLogo').style.display = 'block'; };
 
-// --- Initialisation caméra
-async function init(){
-  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
-    statusEl.textContent='Navigateur non compatible';
-    return;
-  }
-  try{
-    const list=await navigator.mediaDevices.enumerateDevices();
-    devices=list.filter(d=>d.kind==='videoinput');
-    await startStream();
-    statusEl.textContent='Prêt';
-  }catch(err){ console.error(err); statusEl.textContent='Erreur initialisation'; }
-}
+  async function startStream() {
+    if (stream) stream.getTracks().forEach(t => t.stop());
+    
+    // Configuration pour forcer la caméra arrière sur mobile
+    const constraints = {
+      video: {
+        facingMode: useRearCamera ? { exact: "environment" } : "user",
+        width: { ideal: 1920 },
+        height: { ideal: 1080 }
+      },
+      audio: true
+    };
 
-// --- Démarrer flux caméra front/back
-async function startStream(){
-  if(stream) stream.getTracks().forEach(t=>t.stop());
+    try {
+      stream = await navigator.mediaDevices.getUserMedia(constraints);
+    } catch (err) {
+      // Si "exact" échoue (sur PC par exemple), on utilise le mode par défaut
+      constraints.video.facingMode = useRearCamera ? "environment" : "user";
+      stream = await navigator.mediaDevices.getUserMedia(constraints);
+    }
 
-  let constraints = { audio:true, video:{ width:{ideal:1280}, height:{ideal:720} } };
-
-  if(devices.length > 0){
-    const deviceId = devices[currentIndex]?.deviceId;
-    if(deviceId) constraints.video.deviceId = { exact: deviceId };
-  } else {
-    constraints.video.facingMode = currentIndex===0 ? 'user' : 'environment';
-  }
-
-  try{
-    stream = await navigator.mediaDevices.getUserMedia(constraints);
     preview.srcObject = stream;
-    await new Promise(res=>{
-      if(preview.readyState>=2) return res();
-      preview.onloadedmetadata=()=>res();
-    });
-
-    const track = stream.getVideoTracks()[0];
-    const settings = track.getSettings();
-    const facing = settings.facingMode || '';
-    preview.style.transform = facing==='user'?'scaleX(-1)':'scaleX(1)';
-
-  }catch(err){
-    console.error(err);
-    statusEl.textContent='Accès caméra refusé ou indisponible';
+    statusEl.textContent = `Caméra ${useRearCamera ? 'Arrière' : 'Avant'} active`;
   }
-}
 
-// --- Basculer caméra front/back
-switchCam.addEventListener('click', async()=>{
-  currentIndex=(currentIndex+1) % (devices.length || 2);
-  await startStream();
-});
-
-// --- Dessiner watermark sur fond semi-transparent
-function drawWatermark(ctx,w,h){
-  const fontSize=Math.round(w*0.035);
-  const margin=Math.round(w*0.03);
-  let textX=w-margin;
-  const textY=h-margin;
-  if(logoImg) textX-=Math.round(w*0.22)+8;
-
-  const dateText=new Date().toLocaleString();
-  const textLines=[watermarkText,dateText];
-  const lineHeight=fontSize*1.2;
-  const rectPadding=6;
-  const rectHeight=lineHeight*textLines.length+rectPadding*2;
-  const rectWidth=Math.max(...textLines.map(t=>ctx.measureText(t).width))+rectPadding*2;
-
-  ctx.fillStyle='rgba(0,0,0,0.5)';
-  ctx.fillRect(textX-rectWidth,textY-rectHeight,rectWidth,rectHeight);
-
-  ctx.fillStyle='white';
-  ctx.strokeStyle='black';
-  ctx.lineWidth=2;
-  textLines.forEach((line,i)=>{
-    const y=textY-rectHeight+rectPadding+(i+1)*lineHeight-4;
-    ctx.strokeText(line,textX-rectWidth+rectPadding,y);
-    ctx.fillText(line,textX-rectWidth+rectPadding,y);
+  switchCam.addEventListener('click', () => {
+    useRearCamera = !useRearCamera;
+    startStream();
   });
 
-  if(logoImg){
-    const logoW=Math.round(w*0.22);
-    const logoH=Math.round(logoW*(logoImg.height/Math.max(logoImg.width,1)));
-    const logoX=w-logoW-margin;
-    const logoY=h-logoH-margin;
-    ctx.globalAlpha=0.95;
-    ctx.drawImage(logoImg,logoX,logoY,logoW,logoH);
-    ctx.globalAlpha=1;
-  }
-}
+  function drawWatermark(ctx, w, h) {
+    const fontSize = Math.round(w * 0.03);
+    ctx.font = `bold ${fontSize}px Arial`;
+    
+    const dateText = new Date().toLocaleString('fr-FR');
+    const fullText = `${watermarkText} | ${dateText}`;
+    
+    const textWidth = ctx.measureText(fullText).width;
+    const padding = 15;
+    
+    // Fond du texte
+    ctx.fillStyle = 'rgba(0,0,0,0.6)';
+    ctx.fillRect(20, h - fontSize - 40, textWidth + (padding * 2), fontSize + 20);
+    
+    // Texte
+    ctx.fillStyle = 'white';
+    ctx.fillText(fullText, 20 + padding, h - 35);
 
-// --- Prendre photo
-photoBtn.addEventListener('click', async()=>{
-  if(!stream){ statusEl.textContent='Caméra non disponible'; return; }
-  await new Promise(res=>{
-    if(preview.readyState>=2) return res();
-    preview.onloadedmetadata=()=>res();
+    // Logo en haut à droite
+    if (logoImg.complete) {
+      const lW = w * 0.15;
+      const lH = lW * (logoImg.height / logoImg.width);
+      ctx.globalAlpha = 0.8;
+      ctx.drawImage(logoImg, w - lW - 20, 20, lW, lH);
+      ctx.globalAlpha = 1.0;
+    }
+  }
+
+  photoBtn.addEventListener('click', () => {
+    const w = preview.videoWidth;
+    const h = preview.videoHeight;
+    canvas.width = w; canvas.height = h;
+    const ctx = canvas.getContext('2d');
+    
+    ctx.drawImage(preview, 0, 0, w, h);
+    drawWatermark(ctx, w, h);
+    
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
+    addMediaRow('📸 Photo', dataUrl);
+    statusEl.textContent = "Photo capturée !";
   });
-  const w=preview.videoWidth||1280;
-  const h=preview.videoHeight||720;
-  canvas.width=w; canvas.height=h;
-  const ctx=canvas.getContext('2d');
-  const isMirrored=preview.style.transform.includes('-1');
-  if(isMirrored){ ctx.translate(w,0); ctx.scale(-1,1); }
-  ctx.drawImage(preview,0,0,w,h);
-  if(isMirrored) ctx.setTransform(1,0,0,1,0,0);
-  drawWatermark(ctx,w,h);
-  canvas.toBlob(blob=>{
-    const filename=`photo_${Date.now()}.jpg`;
-    const url=URL.createObjectURL(blob);
-    addMediaRow('Photo',url,filename,blob);
-    statusEl.textContent='Photo prise';
-  },'image/jpeg',0.92);
-});
 
-// --- Vidéo
-videoToggle.addEventListener('click',()=>{
-  if(recorder && recorder.state==='recording'){ stopRecording(); } else startRecording();
-});
+  videoToggle.addEventListener('click', () => {
+    if (recorder && recorder.state === 'recording') {
+      recorder.stop();
+      videoToggle.textContent = '🔴 Démarrer Vidéo';
+      videoToggle.classList.remove('danger');
+      recIndicator.style.display = 'none';
+      cancelAnimationFrame(rafId);
+    } else {
+      startRecording();
+    }
+  });
 
-function startRecording(){
-  if(!stream){ statusEl.textContent='Caméra non disponible'; return; }
-  recordedChunks=[];
-  const w=preview.videoWidth||1280;
-  const h=preview.videoHeight||720;
-  canvas.width=w; canvas.height=h;
-  const ctx=canvas.getContext('2d');
+  function startRecording() {
+    recordedChunks = [];
+    const w = preview.videoWidth;
+    const h = preview.videoHeight;
+    canvas.width = w; canvas.height = h;
+    const ctx = canvas.getContext('2d');
 
-  function draw(){
-    ctx.drawImage(preview,0,0,w,h);
-    drawWatermark(ctx,w,h);
-    rafId=requestAnimationFrame(draw);
+    function loop() {
+      ctx.drawImage(preview, 0, 0, w, h);
+      drawWatermark(ctx, w, h);
+      rafId = requestAnimationFrame(loop);
+    }
+    loop();
+
+    const canvasStream = canvas.captureStream(30);
+    const audioTracks = stream.getAudioTracks();
+    if (audioTracks.length) canvasStream.addTrack(audioTracks[0]);
+
+    recorder = new MediaRecorder(canvasStream, { mimeType: 'video/webm' });
+    recorder.ondataavailable = e => recordedChunks.push(e.data);
+    recorder.onstop = () => {
+      const blob = new Blob(recordedChunks, { type: 'video/webm' });
+      addMediaRow('🎥 Vidéo', URL.createObjectURL(blob));
+    };
+
+    recorder.start();
+    videoToggle.textContent = '⏹ Arrêter';
+    videoToggle.classList.add('danger');
+    recIndicator.style.display = 'flex';
   }
-  draw();
 
-  const canvasStream=canvas.captureStream(30);
-  const audioTracks=stream.getAudioTracks();
-  if(audioTracks.length) canvasStream.addTrack(audioTracks[0]);
+  function addMediaRow(type, url) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><img src="${url}" class="thumb"></td>
+      <td>
+        <div style="font-weight:bold">${type}</div>
+        <a href="${url}" download="Gana_${Date.now()}">Télécharger</a>
+      </td>
+    `;
+    mediaTableBody.prepend(tr);
+  }
 
-  try{ recorder=new MediaRecorder(canvasStream,{mimeType:'video/webm;codecs=vp8,opus'}); }
-  catch(e){ try{ recorder=new MediaRecorder(canvasStream); } catch(err){ statusEl.textContent='Enregistrement non supporté'; cancelAnimationFrame(rafId); return; } }
-
-  recorder.ondataavailable=e=>{ if(e.data && e.data.size) recordedChunks.push(e.data); };
-  recorder.onstop=()=>{
-    cancelAnimationFrame(rafId);
-    const blob=new Blob(recordedChunks,{type:'video/webm'});
-    const filename=`video_${Date.now()}.webm`;
-    const url=URL.createObjectURL(blob);
-    addMediaRow('Vidéo',url,filename,blob);
-    statusEl.textContent='Vidéo enregistrée';
+  document.getElementById('clearAll').onclick = () => mediaTableBody.innerHTML = '';
+  document.getElementById('downloadAll').onclick = () => {
+    mediaTableBody.querySelectorAll('a').forEach(a => a.click());
   };
-  recorder.start(200);
-  videoToggle.textContent='Arrêter vidéo';
-  statusEl.textContent='Enregistrement vidéo...';
-}
 
-function stopRecording(){ if(recorder && recorder.state==='recording') recorder.stop(); videoToggle.textContent='Démarrer vidéo'; }
-
-// --- Ajouter ligne tableau
-function addMediaRow(type,url,filename,blob){
-  const tr=document.createElement('tr');
-  const tdType=document.createElement('td'); tdType.textContent=type;
-  const tdPreview=document.createElement('td');
-  const media=document.createElement(type==='Photo'?'img':'video');
-  media.src=url; media.className='thumb';
-  if(type==='Vidéo') media.controls=true;
-  tdPreview.appendChild(media);
-  const tdName=document.createElement('td'); tdName.textContent=filename;
-  const tdDate=document.createElement('td'); tdDate.textContent=new Date().toLocaleString();
-  const tdActions=document.createElement('td');
-  const dl=document.createElement('a'); dl.href=url; dl.download=filename; dl.textContent='Télécharger'; dl.style.marginRight='6px';
-  const send=document.createElement('a'); send.href='#'; send.textContent='Envoyer'; send.style.marginRight='6px';
-  send.addEventListener('click', e=>{ e.preventDefault(); uploadFile(blob,filename); });
-  const del=document.createElement('a'); del.href='#'; del.textContent='Supprimer';
-  del.addEventListener('click', e=>{ e.preventDefault(); tr.remove(); URL.revokeObjectURL(url); });
-  tdActions.appendChild(dl); tdActions.appendChild(send); tdActions.appendChild(del);
-  tr.appendChild(tdType); tr.appendChild(tdPreview); tr.appendChild(tdName); tr.appendChild(tdDate); tr.appendChild(tdActions);
-  mediaTableBody.prepend(tr);
-}
-
-// --- Upload placeholder
-async function uploadFile(blob,filename){
-  statusEl.textContent='Envoi...';
-  try{
-    const form=new FormData();
-    form.append('file',blob,filename);
-    const res=await fetch('/upload',{method:'POST',body:form});
-    statusEl.textContent=res.ok?'Envoyé':'Erreur serveur';
-  }catch(e){ console.error(e); statusEl.textContent='Erreur envoi'; }
-}
-
-// --- Télécharger / vider
-downloadAllBtn.addEventListener('click', ()=>{ mediaTableBody.querySelectorAll('a[download]').forEach(a=>a.click()); });
-clearAllBtn.addEventListener('click', ()=>{ mediaTableBody.innerHTML=''; statusEl.textContent='Liste vidée'; });
-
-// --- Démarrage
-await init();
-
+  await startStream();
 })();
 </script>
 </body>
