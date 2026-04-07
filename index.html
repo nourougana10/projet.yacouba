@@ -1,307 +1,273 @@
 <!doctype html>
 <html lang="fr">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gana Ousmane — Capture Chantier Pro</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<!-- ✅ PWA -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#10b981">
+
+<title>Gana Ousmane — Capture Pro</title>
+
 <style>
-:root {
-  --bg: #0a0f14;
-  --panel: rgba(255, 255, 255, 0.05);
-  --accent: #10b981; /* Vert plus vif */
-  --danger: #ef4444;
-  --muted: #94a3b8;
-  --white: #ffffff;
+body{
+margin:0;
+font-family:Arial;
+background:#0a0f14;
+color:#fff;
 }
 
-* { box-sizing: border-box; transition: all 0.2s ease; }
+h2{text-align:center;}
 
-body { 
-  margin: 0; 
-  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
-  background: var(--bg); 
-  color: var(--white); 
-  display: flex; 
-  justify-content: center; 
-  padding: 20px;
+video{
+width:100%;
+max-height:60vh;
+background:black;
 }
 
-.app { width: 100%; max-width: 1200px; display: grid; grid-template-columns: 1fr 400px; gap: 20px; }
-
-@media(max-width: 1024px) { .app { grid-template-columns: 1fr; } }
-
-.panel { 
-  background: var(--panel); 
-  backdrop-filter: blur(10px); 
-  padding: 20px; 
-  border-radius: 16px; 
-  border: 1px solid rgba(255,255,255,0.1); 
+.controls{
+display:flex;
+justify-content:center;
+gap:10px;
+margin:15px;
+flex-wrap:wrap;
 }
 
-.viewport { 
-  position: relative; 
-  border-radius: 12px; 
-  overflow: hidden; 
-  background: #000; 
-  aspect-ratio: 16/9; 
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+button{
+padding:10px 15px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+font-weight:bold;
 }
 
-video#preview { width: 100%; height: 100%; object-fit: cover; }
+.photo{background:#10b981;color:#fff;}
+.video{background:#ef4444;color:#fff;}
+.switch{background:#333;color:#fff;}
 
-.recording-indicator {
-  position: absolute; top: 15px; left: 15px;
-  display: none; align-items: center; gap: 8px;
-  background: rgba(0,0,0,0.6); padding: 5px 12px; border-radius: 20px;
-  color: #fff; font-size: 12px; font-weight: bold;
-}
-.dot { width: 10px; height: 10px; background: var(--danger); border-radius: 50%; animation: blink 1s infinite; }
-@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-
-.logoOverlay { 
-  position: absolute; right: 15px; bottom: 15px; 
-  width: 20%; max-width: 140px; min-width: 80px;
-  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:20px;
 }
 
-.controls { display: flex; gap: 15px; justify-content: center; align-items: center; margin-top: 20px; }
-
-.btn { 
-  padding: 12px 20px; border-radius: 10px; border: 0; 
-  background: var(--accent); color: #fff; cursor: pointer; 
-  font-weight: 600; display: flex; align-items: center; gap: 8px;
-}
-.btn:hover { opacity: 0.9; transform: translateY(-2px); }
-.btn.secondary { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); }
-.btn.danger { background: var(--danger); }
-
-.bigShutter { 
-  width: 70px; height: 70px; border-radius: 50%; border: 5px solid rgba(255,255,255,0.2);
-  background: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center;
-}
-.bigShutter:active { transform: scale(0.9); }
-
-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-th { text-align: left; color: var(--muted); font-size: 12px; text-transform: uppercase; padding: 10px; }
-td { padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 14px; }
-
-.thumb { width: 80px; height: 50px; object-fit: cover; border-radius: 4px; }
-
-.status-bar { 
-  margin-top: 15px; padding: 8px 15px; border-radius: 8px; 
-  background: rgba(0,0,0,0.2); font-size: 13px; color: var(--accent);
+th,td{
+border:1px solid rgba(255,255,255,0.1);
+padding:8px;
+text-align:center;
 }
 
-a { color: var(--accent); text-decoration: none; font-weight: 500; cursor: pointer; }
-a:hover { text-decoration: underline; }
+th{
+background:#111;
+}
+
+img,video.preview{
+width:100px;
+border-radius:5px;
+}
+
+canvas{display:none;}
 </style>
 </head>
+
 <body>
 
-<div class="app">
-  <div class="panel">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px">
-      <div style="display:flex; gap:15px; align-items:center">
-        <img id="logoPreview" src="assets/logo.png" alt="Logo" style="height:50px; border-radius:8px; background:#fff; padding:5px">
-        <div>
-          <div style="font-weight:bold; font-size:18px">Gana Ousmane</div>
-          <div style="font-size:13px; color:var(--muted)">Expertise Chantier</div>
-        </div>
-      </div>
-    </div>
+<h2>📸 GANA OUSMANE</h2>
 
-    <div class="viewport">
-      <div class="recording-indicator" id="recIndicator"><div class="dot"></div> ENREGISTREMENT</div>
-      <video id="preview" autoplay playsinline muted></video>
-      <img id="overlayLogo" class="logoOverlay" alt="Logo overlay" src="assets/logo.png" style="display:none">
-    </div>
+<video id="video" autoplay playsinline muted></video>
 
-    <div class="controls">
-      <button class="btn secondary" id="switchCam">🔄 Caméra</button>
-      <button class="bigShutter" id="photoBtn" title="Prendre photo"></button>
-      <button class="btn" id="videoToggle">🔴 Démarrer Vidéo</button>
-    </div>
-
-    <div class="status-bar" id="status">Initialisation du système...</div>
-  </div>
-
-  <div class="panel">
-    <h3 style="margin-top:0">Médias récents</h3>
-    <div style="max-height: 500px; overflow-y: auto;">
-      <table id="mediaTable">
-        <thead>
-          <tr><th>Aperçu</th><th>Action</th></tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
-
-    <div style="margin-top:20px; display:flex; gap:10px">
-      <button class="btn" id="downloadAll" style="flex:1">Tout Sauvegarder</button>
-      <button class="btn secondary" id="clearAll">Vider</button>
-    </div>
-  </div>
+<div class="controls">
+<button class="switch" onclick="switchCamera()">🔄 Caméra</button>
+<button class="photo" onclick="takePhoto()">📸 Photo</button>
+<button class="video" onclick="toggleVideo()" id="videoBtn">🎥 Vidéo</button>
 </div>
 
-<canvas id="captureCanvas" style="display:none"></canvas>
+<canvas id="canvas"></canvas>
+
+<table>
+<thead>
+<tr>
+<th>Aperçu</th>
+<th>Nom</th>
+<th>Date</th>
+<th>Lieu</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody id="tableBody"></tbody>
+</table>
 
 <script>
-(async function(){
-  const preview = document.getElementById('preview');
-  const photoBtn = document.getElementById('photoBtn');
-  const videoToggle = document.getElementById('videoToggle');
-  const switchCam = document.getElementById('switchCam');
-  const statusEl = document.getElementById('status');
-  const canvas = document.getElementById('captureCanvas');
-  const mediaTableBody = document.querySelector('#mediaTable tbody');
-  const recIndicator = document.getElementById('recIndicator');
+let video = document.getElementById("video");
+let canvas = document.getElementById("canvas");
+let ctx = canvas.getContext("2d");
+let table = document.getElementById("tableBody");
 
-  let stream = null;
-  let useRearCamera = true; 
-  let recorder = null;
-  let recordedChunks = [];
-  let rafId = null;
-  let logoImg = new Image();
-  const watermarkText = 'GANA OUSMANE - CHANTIER';
+let stream;
+let recorder;
+let chunks=[];
+let recording=false;
+let facing="environment";
 
-  // Charger le logo
-  logoImg.src = 'assets/logo.png';
-  logoImg.onload = () => { document.getElementById('overlayLogo').style.display = 'block'; };
+let locationText="Localisation...";
 
-  async function startStream() {
-    if (stream) stream.getTracks().forEach(t => t.stop());
-    
-    // Configuration pour forcer la caméra arrière sur mobile
-    const constraints = {
-      video: {
-        facingMode: useRearCamera ? { exact: "environment" } : "user",
-        width: { ideal: 1920 },
-        height: { ideal: 1080 }
-      },
-      audio: true
-    };
+// CAMERA
+async function startCamera(){
+try{
+if(stream) stream.getTracks().forEach(t=>t.stop());
 
-    try {
-      stream = await navigator.mediaDevices.getUserMedia(constraints);
-    } catch (err) {
-      // Si "exact" échoue (sur PC par exemple), on utilise le mode par défaut
-      constraints.video.facingMode = useRearCamera ? "environment" : "user";
-      stream = await navigator.mediaDevices.getUserMedia(constraints);
-    }
+stream = await navigator.mediaDevices.getUserMedia({
+video:{facingMode:facing},
+audio:true
+});
 
-    preview.srcObject = stream;
-    statusEl.textContent = `Caméra ${useRearCamera ? 'Arrière' : 'Avant'} active`;
-  }
+video.srcObject = stream;
 
-  switchCam.addEventListener('click', () => {
-    useRearCamera = !useRearCamera;
-    startStream();
-  });
+}catch(e){
+alert("Erreur caméra : "+e.message);
+}
+}
 
-  function drawWatermark(ctx, w, h) {
-    const fontSize = Math.round(w * 0.03);
-    ctx.font = `bold ${fontSize}px Arial`;
-    
-    const dateText = new Date().toLocaleString('fr-FR');
-    const fullText = `${watermarkText} | ${dateText}`;
-    
-    const textWidth = ctx.measureText(fullText).width;
-    const padding = 15;
-    
-    // Fond du texte
-    ctx.fillStyle = 'rgba(0,0,0,0.6)';
-    ctx.fillRect(20, h - fontSize - 40, textWidth + (padding * 2), fontSize + 20);
-    
-    // Texte
-    ctx.fillStyle = 'white';
-    ctx.fillText(fullText, 20 + padding, h - 35);
+function switchCamera(){
+facing = facing==="environment"?"user":"environment";
+startCamera();
+}
 
-    // Logo en haut à droite
-    if (logoImg.complete) {
-      const lW = w * 0.15;
-      const lH = lW * (logoImg.height / logoImg.width);
-      ctx.globalAlpha = 0.8;
-      ctx.drawImage(logoImg, w - lW - 20, 20, lW, lH);
-      ctx.globalAlpha = 1.0;
-    }
-  }
+// DATE
+function getDate(){
+let now = new Date();
+return now.toLocaleString();
+}
 
-  photoBtn.addEventListener('click', () => {
-    const w = preview.videoWidth;
-    const h = preview.videoHeight;
-    canvas.width = w; canvas.height = h;
-    const ctx = canvas.getContext('2d');
-    
-    ctx.drawImage(preview, 0, 0, w, h);
-    drawWatermark(ctx, w, h);
-    
-    const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
-    addMediaRow('📸 Photo', dataUrl);
-    statusEl.textContent = "Photo capturée !";
-  });
+// GPS
+function getLocation(){
+if(navigator.geolocation){
+navigator.geolocation.getCurrentPosition(async (pos)=>{
 
-  videoToggle.addEventListener('click', () => {
-    if (recorder && recorder.state === 'recording') {
-      recorder.stop();
-      videoToggle.textContent = '🔴 Démarrer Vidéo';
-      videoToggle.classList.remove('danger');
-      recIndicator.style.display = 'none';
-      cancelAnimationFrame(rafId);
-    } else {
-      startRecording();
-    }
-  });
+let lat = pos.coords.latitude;
+let lon = pos.coords.longitude;
 
-  function startRecording() {
-    recordedChunks = [];
-    const w = preview.videoWidth;
-    const h = preview.videoHeight;
-    canvas.width = w; canvas.height = h;
-    const ctx = canvas.getContext('2d');
+try{
+let res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`);
+let data = await res.json();
 
-    function loop() {
-      ctx.drawImage(preview, 0, 0, w, h);
-      drawWatermark(ctx, w, h);
-      rafId = requestAnimationFrame(loop);
-    }
-    loop();
+locationText =
+data.address.city ||
+data.address.town ||
+data.address.village ||
+data.address.suburb ||
+"Lieu inconnu";
 
-    const canvasStream = canvas.captureStream(30);
-    const audioTracks = stream.getAudioTracks();
-    if (audioTracks.length) canvasStream.addTrack(audioTracks[0]);
+}catch(e){
+locationText = "GPS actif";
+}
 
-    recorder = new MediaRecorder(canvasStream, { mimeType: 'video/webm' });
-    recorder.ondataavailable = e => recordedChunks.push(e.data);
-    recorder.onstop = () => {
-      const blob = new Blob(recordedChunks, { type: 'video/webm' });
-      addMediaRow('🎥 Vidéo', URL.createObjectURL(blob));
-    };
+});
+}else{
+locationText="GPS non dispo";
+}
+}
 
-    recorder.start();
-    videoToggle.textContent = '⏹ Arrêter';
-    videoToggle.classList.add('danger');
-    recIndicator.style.display = 'flex';
-  }
+// WATERMARK
+function drawWatermark(){
+let txt1="GANA OUSMANE";
+let txt2=getDate();
+let txt3=locationText;
 
-  function addMediaRow(type, url) {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td><img src="${url}" class="thumb"></td>
-      <td>
-        <div style="font-weight:bold">${type}</div>
-        <a href="${url}" download="Gana_${Date.now()}">Télécharger</a>
-      </td>
-    `;
-    mediaTableBody.prepend(tr);
-  }
+ctx.fillStyle="rgba(0,0,0,0.6)";
+ctx.fillRect(0,canvas.height-80,canvas.width,80);
 
-  document.getElementById('clearAll').onclick = () => mediaTableBody.innerHTML = '';
-  document.getElementById('downloadAll').onclick = () => {
-    mediaTableBody.querySelectorAll('a').forEach(a => a.click());
-  };
+ctx.fillStyle="white";
+ctx.font="18px Arial";
 
-  await startStream();
-})();
+ctx.fillText(txt1,10,canvas.height-50);
+ctx.fillText(txt2,10,canvas.height-30);
+ctx.fillText(txt3,10,canvas.height-10);
+}
+
+// TABLE
+function addRow(url,name,type){
+let row=document.createElement("tr");
+
+row.innerHTML=`
+<td>${type==="video" ? `<video src="${url}" class="preview" controls></video>` : `<img src="${url}">`}</td>
+<td>${name}</td>
+<td>${getDate()}</td>
+<td>${locationText}</td>
+<td>
+<button onclick="download('${url}','${name}')">💾</button>
+<button onclick="this.parentElement.parentElement.remove()">🗑️</button>
+</td>
+`;
+
+table.prepend(row);
+}
+
+// DOWNLOAD
+function download(url,name){
+let a=document.createElement("a");
+a.href=url;
+a.download=name;
+a.click();
+}
+
+// PHOTO
+function takePhoto(){
+canvas.width=video.videoWidth;
+canvas.height=video.videoHeight;
+
+ctx.drawImage(video,0,0);
+drawWatermark();
+
+canvas.toBlob(blob=>{
+let url=URL.createObjectURL(blob);
+let name="photo_"+Date.now()+".jpg";
+
+addRow(url,name,"photo");
+download(url,name);
+});
+}
+
+// VIDEO
+function toggleVideo(){
+
+if(recording){
+recorder.stop();
+recording=false;
+document.getElementById("videoBtn").innerText="🎥 Vidéo";
+return;
+}
+
+chunks=[];
+
+recorder=new MediaRecorder(stream);
+
+recorder.ondataavailable=e=>chunks.push(e.data);
+
+recorder.onstop=()=>{
+let blob=new Blob(chunks,{type:"video/webm"});
+let url=URL.createObjectURL(blob);
+let name="video_"+Date.now()+".webm";
+
+addRow(url,name,"video");
+download(url,name);
+};
+
+recorder.start();
+recording=true;
+document.getElementById("videoBtn").innerText="⛔ Stop";
+}
+
+// SERVICE WORKER
+if('serviceWorker' in navigator){
+navigator.serviceWorker.register('sw.js');
+}
+
+// START
+getLocation();
+startCamera();
 </script>
+
 </body>
 </html>
